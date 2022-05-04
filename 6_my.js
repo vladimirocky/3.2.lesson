@@ -19,6 +19,25 @@ class Figure {
         this.moveUp = false;
     }
 
+    Computer(f1, f2, f3, f4) {
+        let counter = 0;
+        
+        if (f1 == f2 || f1 == f3 || f1 == f4) {
+            counter++;
+            document.getElementById("counter").innerHTML = counter;    
+        }
+
+        if (f2 == f3 || f2 == f4) {
+            counter++;
+            document.getElementById("counter").innerHTML = counter;
+        }
+
+        if (f4 == f3) {
+            counter++;
+            document.getElementById("counter").innerHTML = counter;
+        }
+
+    }
 }
 
 class Rect extends Figure { // наследование
@@ -31,7 +50,7 @@ class Rect extends Figure { // наследование
                 height: 50px;
                 position: absolute;
                 top: ${this.positionY}px;
-                left: ${this.positionX}px;"></div>
+                left: ${this.positionX}px;">${this.coordinate}</div>
             `;
     }
 
@@ -59,6 +78,8 @@ class Rect extends Figure { // наследование
 
         this.moveLeft ? this.positionX -= 1 : this.positionX += 1;
         this.moveUp ? this.positionY -= 5 : this.positionY += 5;
+
+        this.coordinate = this.positionX + this.positionY
     }
 }
 
@@ -74,7 +95,7 @@ class Circle extends Figure { // наследование
                 border-radius: 25px;
                 position: absolute;
                 top: 10px;
-                left: ${this.positionX}px"></div>
+                left: ${this.positionX}px">${this.coordinate}</div>
         `;
     }
 
@@ -90,6 +111,7 @@ class Circle extends Figure { // наследование
         }
         this.moveLeft ? this.positionX -= 50 : this.positionX += 50;
         
+        this.coordinate = this.positionX + this.positionY
     }
 }
 
@@ -108,7 +130,7 @@ class Square extends Figure {
                 position: absolute;
                 transform: rotate(${this.rotation}turn);
                 top: ${this.positionY}px;
-                left: ${this.positionX}px"></div>
+                left: ${this.positionX}px">${this.coordinate}</div>
         `;
     }
 
@@ -138,15 +160,12 @@ class Square extends Figure {
         this.moveUp ? this.positionY -= 25 : this.positionY += 25;
 
         this.rotation += 0.1;
+
+        this.coordinate = this.positionX + this.positionY;
     }
 }
 
 class MyFigure extends Figure {
-
-    constructor() {
-        super();
-    }
-
     draw() {
         document.getElementById("app").innerHTML += `
             <div style="
@@ -154,7 +173,7 @@ class MyFigure extends Figure {
                 width: 50px;
                 height: 50px;
                 position: absolute;
-                top: ${this.positionY}px;"></div>
+                top: ${this.positionY}px;">${this.coordinate}</div>
         `;
     }
 
@@ -170,15 +189,21 @@ class MyFigure extends Figure {
                     break;
         }
         this.moveUp ? this.positionY -= 25 : this.positionY += 25;
+        
+        this.coordinate = this.positionY;
     }
-
+    
 }
 
-const figures = [ new Rect(), new Circle(), new Square(), new MyFigure ];
+const figures = [new Rect(), new Circle(), new Square(), new MyFigure ];
+let fg1 = figures[0], fg2 = figures[1], fg3 = figures[2], fg4 = figures[3];
+
+
 setInterval(() => {
     document.getElementById("app").innerHTML = "";
     for (let figure of figures) {
         figure.move();
         figure.draw();
+        figure.Computer(fg1.coordinate, fg2.coordinate, fg3.coordinate, fg4.coordinate);
     }
-}, 200); 
+}, 200);
