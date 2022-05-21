@@ -19,24 +19,29 @@ class Figure {
         this.moveUp = false;
     }
 
-    Computer(f1, f2, f3, f4) {
-        let counter = 0;
-        
-        if (f1 == f2 || f1 == f3 || f1 == f4) {
-            counter++;
-            document.getElementById("counter").innerHTML = counter;    
-        }
+    static count = 0;
 
-        if (f2 == f3 || f2 == f4) {
-            counter++;
-            document.getElementById("counter").innerHTML = counter;
-        }
-
-        if (f4 == f3) {
-            counter++;
-            document.getElementById("counter").innerHTML = counter;
-        }
-
+    static Computer(figures) {
+        // for (let figure of figures) {
+        //     for (let fig of figures) {
+        //         let diff = Math.sqrt(Math.pow(fig.positionX - figure.positionX, 2) + Math.pow(fig.positionY - figure.positionY));
+        //         if (diff < 50) {
+        //             this.count++;
+        //         }
+        //     }
+        // }
+        console.log(figures)
+        figures.forEach(item, index => {
+            figures.forEach((item_q, index_q) => {
+                if (index_q !== index) {
+                    let diff = Math.sqrt(Math.pow(item.positionX - item_q.positionX, 2) + Math.pow(item.positionY - item_q.positionY));
+                    if (diff < 50) {
+                        this.count++;
+                        console.log(this.count);
+                    }
+                }
+            });
+        });
     }
 }
 
@@ -169,6 +174,7 @@ class MyFigure extends Figure {
     draw() {
         document.getElementById("app").innerHTML += `
             <div style="
+                left: 0;
                 background: yellow;
                 width: 50px;
                 height: 50px;
@@ -204,6 +210,11 @@ setInterval(() => {
     for (let figure of figures) {
         figure.move();
         figure.draw();
-        figure.Computer(fg1.coordinate, fg2.coordinate, fg3.coordinate, fg4.coordinate);
     }
+
+    Figure.Computer(figures);
+
+    let counter = document.getElementById("counter");
+    counter.innerHTML = '';
+    counter.innerHTML = `${Figure.count}`;
 }, 200);
