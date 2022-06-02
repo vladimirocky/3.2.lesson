@@ -19,30 +19,40 @@ class Figure {
         this.moveUp = false;
     }
 
+    static collision_map = [];
     static count = 0;
 
     static Computer(figures) {
-        // for (let figure of figures) {
-        //     for (let fig of figures) {
-        //         let diff = Math.sqrt(Math.pow(fig.positionX - figure.positionX, 2) + Math.pow(fig.positionY - figure.positionY));
-        //         if (diff < 50) {
-        //             this.count++;
-        //         }
-        //     }
-        // }
-        console.log(figures)
-        figures.forEach(item, index => {
-            figures.forEach((item_q, index_q) => {
+        
+        let temp = figures.map((item, index) => {
+            return figures.map((item_q, index_q) => {
+                let isColl = false;
                 if (index_q !== index) {
-                    let diff = Math.sqrt(Math.pow(item.positionX - item_q.positionX, 2) + Math.pow(item.positionY - item_q.positionY));
+                    let diff = Math.sqrt(Math.pow(item.positionX - item_q.positionX, 2) + Math.pow(item.positionY - item_q.positionY, 2));
                     if (diff < 50) {
-                        this.count++;
-                        console.log(this.count);
+                        isColl = true;
                     }
+                    return isColl;
                 }
             });
         });
+        console.log(temp, this.collision_map);
+        if (this.collision_map.length) {
+            for (let i = 0; i < temp.length; i++) {
+                for (let j = i; j < temp[i].length; j++) {
+                    if (this.collision_map[i][j] !== temp[i][j]) {
+                        if (this.collision_map[i][j]) {
+                            this.count++;
+                        }
+                        this.collision_map[i][j] = temp[i][j];
+                    }
+                }
+            }
+        } else {
+            this.collision_map = temp;
+        }
     }
+    
 }
 
 class Rect extends Figure { // наследование
@@ -202,17 +212,48 @@ class MyFigure extends Figure {
 }
 
 const figures = [new Rect(), new Circle(), new Square(), new MyFigure ];
-let fg1 = figures[0], fg2 = figures[1], fg3 = figures[2], fg4 = figures[3];
-
 
 setInterval(() => {
     document.getElementById("app").innerHTML = "";
+
     for (let figure of figures) {
         figure.move();
         figure.draw();
     }
-
+    
     Figure.Computer(figures);
+    let table = document.getElementById('table');
+    table.innerHTML = '';
+    let capt = document.createElement('caption');
+    capt.innerHTML = 'Таблица столкновений';
+    table.appendChild(capt);
+
+    let fir_row = document.createElement('tr');
+    let thd = document.createElement('td');
+    thd.innerHTML = '№';
+    fir_row.appendChild(thd);
+    
+    for (let i = 0; i < figures.length; i++) {
+        thd = document.createElement('td');
+        thd.innerHTML = `${i}`;
+        fir_row.appendChild(thd);
+    }
+    table.appendChild(fir_row);
+
+    Figure.collision_map.forEach((item, index) => {
+        let row = document.createElement('tr');
+        let fir_col = document.createElement('td');
+        fir_col.innerHTML = `${index}`;
+        row.appendChild(fir_col);
+
+        item.forEach((it) => {
+            let td = document.createElement('td');
+            td.innerHTML = it;
+            it ? td.style.background = '#8f509d' : td.style.background = `#4b9e41`;
+            row.appendChild(td);
+        })
+        table.appendChild(row);
+    })
 
     let counter = document.getElementById("counter");
     counter.innerHTML = '';
